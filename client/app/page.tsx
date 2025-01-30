@@ -9,16 +9,16 @@ export default function MainPage() {
     const [orders, setOrders] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalOrders, setTotalOrders] = useState(0);
-    const [token, setToken] = useState<string | null>(null);
     const router = useRouter();
 
     useEffect(() => {
         const storedToken = Cookies.get("jwt");
         if (storedToken) {
-            setToken(storedToken);
             fetchOrders(storedToken, currentPage);
+        } else {
+            router.push("/sign-in"); // Redirect to login if no token
         }
-    }, [currentPage]);
+    }, [currentPage, router]);
 
     const fetchOrders = async (token: string, page: number) => {
         const response = await fetch(`http://localhost:8081/orders?page=${page}`, {
@@ -31,33 +31,23 @@ export default function MainPage() {
 
         if (response.ok) {
             const data = await response.json();
-            setOrders(data.orders); // assuming the response has orders array
-            setTotalOrders(data.total); // assuming the response has the total number of orders
+            setOrders(data.orders);
+            setTotalOrders(data.total);
         }
     };
 
-    const handleSignInRedirect = () => {
-        router.push("/sign-in"); // Redirect to the sign-in page if the user is not logged in
-    };
+    const handleSignOut = async () => {
+        await fetch("http://localhost:8081/user/logout", {
+            method: "POST",
+            credentials: "include",
+        });
 
-    if (!token) {
-        return (
-            <Container size="sm" mt={50}>
-                <Card shadow="sm" p="lg" radius="md" withBorder>
-                    <Title align="center" order={2} mb="lg">Your session has expired. Please login to be able to view all orders</Title>
-                    <Button variant="filled" color="blue" size="xl" radius="xl" onClick={handleSignInRedirect}>
-                        Login
-                    </Button>
-                </Card>
-            </Container>
-        );
-    }
+        Cookies.remove("jwt"); // Remove the JWT cookie manually
+        router.push("/sign-in"); // Redirect to login after logout
+    };
 
     return (
         <Container size="sm" mt={50}>
-            <Card shadow="sm" p="lg" radius="md" withBorder>
-                <Text size="lg">Welcome back!</Text>
-            </Card>
 
             <Card shadow="sm" p="lg" radius="md" withBorder mt="xl">
                 <Title order={3}>Your Orders</Title>
@@ -84,9 +74,15 @@ export default function MainPage() {
                 <Pagination
                     page={currentPage}
                     onChange={setCurrentPage}
-                    total={Math.ceil(totalOrders / 10)}  // Assuming 10 orders per page
+                    total={Math.ceil(totalOrders / 10)}
                     mt="md"
                 />
+            </Card>
+
+            <Card shadow="sm" p="lg" radius="md" withBorder>
+                <Button variant="outline" color="red" size="xl" radius="xl" onClick={handleSignOut}>
+                    Logout
+                </Button>
             </Card>
         </Container>
     );
