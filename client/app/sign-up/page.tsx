@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button, Card, TextInput, Container, Title, Group, Space, Text, Notification} from "@mantine/core";
 import '@mantine/core/styles.css';
@@ -8,6 +8,7 @@ import Link from "next/link";
 import {z} from "zod";
 import {useForm, zodResolver} from "@mantine/form";
 import {IconX} from "@tabler/icons-react";
+import Cookies from "js-cookie";
 
 const schema = z.object({
     username: z.string()
@@ -21,6 +22,13 @@ const schema = z.object({
 export default function RegisterPage() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const router = useRouter();
+
+    useEffect(() => {
+        const refreshToken = Cookies.get("refresh");
+        if (refreshToken) {
+            router.push("/");
+        }
+    }, [router]);
 
     const form = useForm({
         validate: zodResolver(schema),

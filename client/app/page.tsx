@@ -50,6 +50,7 @@ export default function MainPage() {
     };
 
     const handleSignOut = async () => {
+        Cookies.remove("refresh");
         Cookies.remove("jwt");
         router.push("/sign-in");
     };
