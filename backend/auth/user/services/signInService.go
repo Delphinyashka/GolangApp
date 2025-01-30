@@ -15,7 +15,6 @@ import (
 // Secret key for signing JWTs (move this to an environment variable in production)
 var jwtSecret = []byte("SQX1234567")
 
-// AuthenticateUser checks credentials and returns a JWT token if valid.
 func AuthenticateUser(username, password string, c *gin.Context) (string, error) {
 	var user models.User
 
@@ -33,7 +32,7 @@ func AuthenticateUser(username, password string, c *gin.Context) (string, error)
 	}
 
 	// Set expiration time for 7 days
-	expiration := time.Now().Add(time.Minute * 5) // 7 days expiration
+	expiration := time.Now().Add(time.Minute * 5)
 
 	// Generate JWT token
 	tokenString, err := generateJWT(username, expiration)
@@ -45,17 +44,18 @@ func AuthenticateUser(username, password string, c *gin.Context) (string, error)
 	// Set JWT in HttpOnly cookie
 	secure := false
 	if gin.Mode() == gin.ReleaseMode {
-		// If in production (secure environment), set Secure flag to true
 		secure = true
 	}
-	c.SetCookie("jwt", tokenString, int(expiration.Sub(time.Now()).Seconds()), "/", "", secure, true)
-	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true") // Allow credentials
-	c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000") // Your frontend domain here
+	c.SetCookie("jwt", tokenString, int(expiration.Sub(time.Now()).Seconds()), "/", "", secure, false)
+	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+	c.Writer.Header().Set("Access-Control-Allow-Origin", c.Request.Header.Get("Origin"))
+	c.Writer.Header().Set("Vary", "Origin")
 
 	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
 
 	return tokenString, nil
 }
+
 
 // generateJWT creates a new JWT token for authenticated users.
 func generateJWT(username string, expiration time.Time) (string, error) {
@@ -66,11 +66,4 @@ func generateJWT(username string, expiration time.Time) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(jwtSecret)
-}
-
-// LogoutUser clears the JWT cookie.
-func LogoutUser(c *gin.Context) {
-	// Clear the JWT cookie by setting its expiration to a past date
-	c.SetCookie("jwt", "", -1, "/", "", false, true)
-	c.JSON(http.StatusOK, gin.H{"message": "Logout successful"})
 }

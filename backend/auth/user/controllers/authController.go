@@ -47,16 +47,14 @@ func SignIn(c *gin.Context) {
 		return
 	}
 
-	// Authenticate user and generate token
+	// Authenticate user and generate token (errors already handled inside AuthenticateUser)
 	_, err := services.AuthenticateUser(req.Username, req.Password, c)
 	if err != nil {
-		// Handle error during authentication
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
+		return // Do not set another JSON response
 	}
 
 	// Return success response (token is already set in cookie by service)
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+	//c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
 }
 
 // VerifyToken checks if the JWT is valid
