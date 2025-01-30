@@ -37,14 +37,15 @@ export default function RegisterPage() {
         const response = await fetch("http://localhost:8081/user/signUp", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
+            credentials: 'include',
             body: JSON.stringify(values),
         });
 
         if (response.ok) {
             router.push("/sign-in");
         } else {
-            const data = await response.json();
-            setErrorMessage(data.error || "Registration failed");
+            const responseMessage = await response.json();
+            setErrorMessage(responseMessage.error || "Registration failed");
             setTimeout(() => setErrorMessage(null), 7000);
         }
     };
