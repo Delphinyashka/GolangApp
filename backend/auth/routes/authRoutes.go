@@ -12,6 +12,6 @@ func SetupRoutes(router *gin.Engine) {
 	{
 		userGroup.POST("/signUp", controllers.SignUp)
 		userGroup.POST("/signIn", controllers.SignIn)
-		router.GET("/user/verify", controllers.VerifyToken)
+		//router.GET("/user/verify", controllers.VerifyToken)
 	}
 }

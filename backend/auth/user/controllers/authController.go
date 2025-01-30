@@ -3,7 +3,6 @@ package controllers
 import (
 	"auth/user/services"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 )
 
@@ -48,24 +47,20 @@ func SignIn(c *gin.Context) {
 		return
 	}
 
-	// Authenticate user
-	token, err := services.AuthenticateUser(req.Username, req.Password, c)
+	// Authenticate user and generate token
+	_, err := services.AuthenticateUser(req.Username, req.Password, c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
+		// Handle error during authentication
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Set JWT token in HTTP-only cookie
-	c.SetCookie("token", token, 3600, "/", "", false, true)
-
-	// Return success response
+	// Return success response (token is already set in cookie by service)
 	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
 }
 
-var jwtSecret = []byte("SQX1234567")
-
 // VerifyToken checks if the JWT is valid
-func VerifyToken(c *gin.Context) {
+/*func VerifyToken(c *gin.Context) {
 	tokenString, err := c.Cookie("token") // Assuming token is stored in "token" cookie
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
@@ -83,4 +78,4 @@ func VerifyToken(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Authenticated"})
-}
+}*/
