@@ -24,7 +24,7 @@ export default function LoginPage() {
         const response = await fetch("http://localhost:8081/user/signIn", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            credentials: 'include', // Allows cookies to be sent
+            credentials: 'include',
             body: JSON.stringify({ username, password }),
         });
 
