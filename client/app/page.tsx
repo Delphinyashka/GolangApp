@@ -12,13 +12,26 @@ export default function MainPage() {
     const router = useRouter();
 
     useEffect(() => {
-        const storedToken = Cookies.get("jwt");
-        if (storedToken) {
-            fetchOrders(storedToken, currentPage);
-        } else {
-            router.push("/sign-in"); // Redirect to login if no token
+        const jwtToken = Cookies.get("jwt");
+        const refreshToken = Cookies.get("refresh");
+        if (jwtToken) {
+            fetchOrders(jwtToken, currentPage);
+        }
+        else if (!jwtToken && refreshToken) {
+            handleRefresh();
+        }
+        else {
+            router.push("/sign-in");
         }
     }, [currentPage, router]);
+
+    const handleRefresh = async () => {
+        const response = await fetch("http://localhost:8081/user/refresh", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include',
+        });
+    };
 
     const fetchOrders = async (token: string, page: number) => {
         const response = await fetch(`http://localhost:8081/orders?page=${page}`, {
@@ -37,8 +50,8 @@ export default function MainPage() {
     };
 
     const handleSignOut = async () => {
-        Cookies.remove("jwt"); // Remove the JWT cookie manually
-        router.push("/sign-in"); // Redirect to login after logout
+        Cookies.remove("jwt");
+        router.push("/sign-in");
     };
 
     return (

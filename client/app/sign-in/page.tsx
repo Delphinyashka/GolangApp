@@ -14,10 +14,9 @@ export default function LoginPage() {
     const router = useRouter();
 
     useEffect(() => {
-        // Check if JWT token exists in cookies, if yes, redirect to the main page
-        const storedToken = Cookies.get("jwt");
-        if (storedToken) {
-            router.push("/"); // If token is found, redirect to the main page
+        const refreshToken = Cookies.get("refresh");
+        if (refreshToken) {
+            router.push("/");
         }
     }, [router]);
 
@@ -30,9 +29,10 @@ export default function LoginPage() {
         });
 
         if (response.ok) {
-            // JWT token will be automatically set by the backend cookie, no need to handle it manually
-            console.log("token", Cookies.get("jwt"))
-            router.push("/"); // Redirect to the main page after successful login
+            const data = await response.json();
+            const expirationTimestampInSeconds = data.refresh;
+            Cookies.set("refresh", "valid", { expires: new Date(expirationTimestampInSeconds * 1000) });
+            router.push("/");
         } else {
             const responseMessage = await response.json();
             setErrorMessage(responseMessage.error || "Authentication failed");

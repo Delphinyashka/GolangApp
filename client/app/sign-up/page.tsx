@@ -9,7 +9,6 @@ import {z} from "zod";
 import {useForm, zodResolver} from "@mantine/form";
 import {IconX} from "@tabler/icons-react";
 
-// Zod validation schema (same as in backend)
 const schema = z.object({
     username: z.string()
         .min(3, "Username must be at least 3 characters long")

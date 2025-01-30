@@ -12,13 +12,11 @@ import (
 var db *gorm.DB
 
 func InitDB() {
-	// Load environment variables from .env file
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
-	// Build the DSN (Data Source Name) for connecting to the database
 	dsn := fmt.Sprintf(
 		"host=%s user=%s dbname=%s port=%s sslmode=disable",
 		os.Getenv("DB_HOST"),
@@ -27,14 +25,12 @@ func InitDB() {
 		os.Getenv("DB_PORT"),
 	)
 
-	// Connect to the database
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
 }
 
-// GetDB returns the database instance
 func GetDB() *gorm.DB {
 	return db
 }
