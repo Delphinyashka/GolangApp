@@ -31,7 +31,7 @@ export default function LoginPage() {
 
         if (response.ok) {
             // JWT token will be automatically set by the backend cookie, no need to handle it manually
-            console.log("jwt", Cookies.get("jwt"));
+            console.log("token", Cookies.get("jwt"))
             router.push("/"); // Redirect to the main page after successful login
         } else {
             const responseMessage = await response.json();

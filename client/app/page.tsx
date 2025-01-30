@@ -37,11 +37,6 @@ export default function MainPage() {
     };
 
     const handleSignOut = async () => {
-        await fetch("http://localhost:8081/user/logout", {
-            method: "POST",
-            credentials: "include",
-        });
-
         Cookies.remove("jwt"); // Remove the JWT cookie manually
         router.push("/sign-in"); // Redirect to login after logout
     };
