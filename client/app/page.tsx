@@ -34,7 +34,7 @@ export default function MainPage() {
     };
 
     const fetchOrders = async (token: string, page: number) => {
-        const response = await fetch(`http://localhost:8081/orders?page=${page}`, {
+        const response = await fetch(`http://localhost:8082/api/orders?page=${page}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

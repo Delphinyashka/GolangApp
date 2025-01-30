@@ -10,9 +10,9 @@ import (
 
 const ordersServiceURL = "http://localhost:8084" // Orders service URL
 
-// FetchOrders retrieves order data from the orders service based on order IDs
-func FetchOrders(orderIDs []string) ([]map[string]interface{}, error) {
-	url := fmt.Sprintf("%s/orders?ids=%s", ordersServiceURL, strings.Join(orderIDs, ","))
+// FetchOrders retrieves order data from the orders service based on order IDs with pagination
+func FetchOrders(orderIDs []string, page int, limit int) ([]map[string]interface{}, error) {
+	url := fmt.Sprintf("%s/orders?ids=%s&page=%d&limit=%d", ordersServiceURL, strings.Join(orderIDs, ","), page, limit)
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get orders from orders service: %v", err)
