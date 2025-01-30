@@ -18,6 +18,7 @@ func main() {
 		AllowOrigins: []string{"http://localhost:3000"}, // Frontend URL
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
+		AllowCredentials: true,
 	}))
 
 	// Initialize the database connection
