@@ -1,10 +1,10 @@
 "use client";
 import {useState, useEffect} from "react";
 import {useRouter} from "next/navigation";
-import {Button, Card, Text, Container, Title, Space, Table, Pagination, Notification} from "@mantine/core";
+import {Button, Card, Text, Container, Title, Table, Pagination} from "@mantine/core";
 import '@mantine/core/styles.css';
 import Cookies from "js-cookie";
-import {IconX} from "@tabler/icons-react";
+import ErrorNotification from "@/app/components/ErrorNotification";
 
 export default function MainPage() {
     const [orders, setOrders] = useState([]);
@@ -62,23 +62,9 @@ export default function MainPage() {
 
     return (
         <>
-            {errorMessage && (
-                <Notification
-                    color="red"
-                    icon={<IconX size="1.1rem"/>}
-                    style={{
-                        position: 'fixed',
-                        top: '20px',
-                        right: '20px',
-                        zIndex: 999,
-                    }}
-                    onClose={() => setErrorMessage(null)}
-                >
-                    {errorMessage}
-                </Notification>
-            )}
-            <Container size="sm" mt={50}>
+            <ErrorNotification errorMessage={errorMessage} onClose={() => setErrorMessage(null)}/>
 
+            <Container size="sm" mt={50}>
                 <Card shadow="sm" p="lg" radius="md" withBorder mt="xl">
                     <Title order={3}>Your Orders</Title>
                     <Table mt="md">
