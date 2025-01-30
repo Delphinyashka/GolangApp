@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const ordersServiceURL = "http://localhost:8082" // Orders service URL
+const ordersServiceURL = "http://localhost:8084" // Orders service URL
 
 // FetchOrders retrieves order data from the orders service based on order IDs
 func FetchOrders(orderIDs []string) ([]map[string]interface{}, error) {

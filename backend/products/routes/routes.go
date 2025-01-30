@@ -7,8 +7,8 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine) {
-	clientGroup := router.Group("/clients")
+	productGroup := router.Group("/products")
 	{
-		clientGroup.GET("/", handlers.GetProducts)
+		productGroup.GET("/", handlers.GetProducts)
 	}
 }
