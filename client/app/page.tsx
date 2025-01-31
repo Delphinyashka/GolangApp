@@ -1,7 +1,7 @@
 "use client";
-import {useState, useEffect} from "react";
-import {useRouter} from "next/navigation";
-import {Button, Card, Text, Container, Title, Table, Pagination} from "@mantine/core";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button, Card, Container, Title, Table, Pagination } from "@mantine/core";
 import '@mantine/core/styles.css';
 import Cookies from "js-cookie";
 import ErrorNotification from "@/app/components/ErrorNotification";
@@ -30,9 +30,14 @@ export default function MainPage() {
     const handleRefresh = async () => {
         const response = await fetch("http://localhost:8081/user/refresh", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             credentials: 'include',
         });
+        if (response.ok) {
+            const data = await response.json();
+            Cookies.set("jwt", data.jwt); // Assuming the refreshed token is in the response
+            fetchOrders(data.jwt, currentPage, itemsPerPage);
+        }
     };
 
     const fetchOrders = async (token: string, page: number, limit: number) => {
@@ -64,34 +69,37 @@ export default function MainPage() {
 
     return (
         <>
-            <ErrorNotification errorMessage={errorMessage} onClose={() => setErrorMessage(null)}/>
+            <ErrorNotification errorMessage={errorMessage} onClose={() => setErrorMessage(null)} />
 
             <Container size="sm" mt={50}>
                 <Card shadow="sm" p="lg" radius="md" withBorder mt="xl">
                     <Title order={3}>Your Orders</Title>
                     <Table mt="md">
-                        <thead>
-                        <tr>
-                            <th>Product Name</th>
-                            <th>Client Name</th>
-                            <th>Price</th>
-                            <th>Order ID</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {orders.map((order: any) => (
-                            <tr key={order.id}>
-                                <td>{order.productName}</td>
-                                <td>{order.clientName}</td>
-                                <td>{order.price}</td>
-                                <td>{order.id}</td>
-                            </tr>
-                        ))}
-                        </tbody>
+                        <Table.Thead>
+                            <Table.Tr>
+                                <Table.Th>Order ID</Table.Th>
+                                <Table.Th>Product Name</Table.Th>
+                                <Table.Th>Client Name</Table.Th>
+                                <Table.Th>Price</Table.Th>
+                            </Table.Tr>
+                        </Table.Thead>
+                        <Table.Tbody>
+                            {orders.map((order: any) => (
+                                <Table.Tr key={order.id}>
+                                    <Table.Td>{order.id}</Table.Td>
+                                    <Table.Td>{order.productName}</Table.Td>
+                                    <Table.Td>{order.clientName}</Table.Td>
+                                    <Table.Td>{order.price}</Table.Td>
+                                </Table.Tr>
+                            ))}
+                        </Table.Tbody>
                     </Table>
                     <Pagination
                         page={currentPage}
-                        onChange={setCurrentPage}
+                        onChange={(page) => {
+                            setCurrentPage(page);
+                            fetchOrders(Cookies.get("jwt") || "", page, itemsPerPage); // Fetch orders for the new page
+                        }}
                         total={Math.ceil(totalOrders / itemsPerPage)}
                         mt="md"
                     />
