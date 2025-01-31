@@ -13,11 +13,13 @@ export default function MainPage() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const router = useRouter();
 
+    const itemsPerPage = 10;
+
     useEffect(() => {
         const jwtToken = Cookies.get("jwt");
         const refreshToken = Cookies.get("refresh");
         if (jwtToken) {
-            fetchOrders(jwtToken, currentPage);
+            fetchOrders(jwtToken, currentPage, itemsPerPage);
         } else if (!jwtToken && refreshToken) {
             handleRefresh();
         } else {
@@ -33,8 +35,8 @@ export default function MainPage() {
         });
     };
 
-    const fetchOrders = async (token: string, page: number) => {
-        const response = await fetch(`http://localhost:8082/api/orders?page=${page}`, {
+    const fetchOrders = async (token: string, page: number, limit: number) => {
+        const response = await fetch(`http://localhost:8082/api/orders?page=${page}&limit=${limit}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -90,7 +92,7 @@ export default function MainPage() {
                     <Pagination
                         page={currentPage}
                         onChange={setCurrentPage}
-                        total={Math.ceil(totalOrders / 10)}
+                        total={Math.ceil(totalOrders / itemsPerPage)}
                         mt="md"
                     />
                 </Card>

@@ -16,7 +16,7 @@ func VerifyJWTToken(token string) (bool, error) {
 	}
 
 	// Create the request to the authentication service
-	req, err := http.NewRequest("POST", authServiceURL+"/user/verify", nil)
+	req, err := http.NewRequest("GET", authServiceURL+"/user/verify", nil)
 	if err != nil {
 		return false, fmt.Errorf("failed to create request: %v", err)
 	}
