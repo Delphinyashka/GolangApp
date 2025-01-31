@@ -52,6 +52,7 @@ export default function MainPage() {
 
         if (response.ok) {
             const data = await response.json();
+            console.log(totalOrders);
             setOrders(data.orders);
             setTotalOrders(data.total);
         } else {
@@ -98,7 +99,7 @@ export default function MainPage() {
                         page={currentPage}
                         onChange={(page) => {
                             setCurrentPage(page);
-                            fetchOrders(Cookies.get("jwt") || "", page, itemsPerPage); // Fetch orders for the new page
+                            fetchOrders(Cookies.get("jwt") || "", page, itemsPerPage);
                         }}
                         total={Math.ceil(totalOrders / itemsPerPage)}
                         mt="md"

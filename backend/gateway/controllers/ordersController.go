@@ -87,6 +87,12 @@ func GetOrders(c *gin.Context) {
 		return
 	}
 
+	ordersTotal, err := services.CalculateTotalAmount()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to calculate total amount"})
+		return
+	}
+
 	// Transform orders to match frontend expectations
 	var formattedOrders []map[string]interface{}
 	for _, order := range orders {
@@ -131,6 +137,6 @@ func GetOrders(c *gin.Context) {
 	// Return the aggregated data
 	c.JSON(http.StatusOK, gin.H{
 		"orders": formattedOrders,
-		"total":  len(orders),
+		"ordersTotal":  ordersTotal,
 	})
 }
