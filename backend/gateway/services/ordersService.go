@@ -38,7 +38,6 @@ func FetchOrders(orderIDs []string, page int, limit int) ([]map[string]interface
 }
 
 func CalculateTotalAmount() (float64, error) {
-	// Prepare the request URL for getting the total amount of all orders
 	url := fmt.Sprintf("%s/total", ordersServiceURL)
 	resp, err := http.Get(url)
 	if err != nil {
@@ -50,20 +49,17 @@ func CalculateTotalAmount() (float64, error) {
 		return 0, fmt.Errorf("failed to fetch total amount: status code %d", resp.StatusCode)
 	}
 
-	// Read the response body
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return 0, fmt.Errorf("failed to read response body: %v", err)
 	}
 
-	// Parse the response body to get the total amount
 	var result map[string]interface{}
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return 0, fmt.Errorf("failed to unmarshal response: %v", err)
 	}
 
-	// Extract the total amount from the response
 	if totalAmount, ok := result["totalAmount"].(float64); ok {
 		return totalAmount, nil
 	}

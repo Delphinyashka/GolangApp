@@ -37,18 +37,14 @@ func GetOrders(c *gin.Context) {
 }
 
 func GetTotalAmount(c *gin.Context) {
-	var result struct {
-		TotalAmount int64 `json:"totalAmount"` // Changed the type to int64
-	}
+	var result int64
 
-	if err := config.GetDB().Model(&models.Order{}).
-		Select("COUNT(*) as totalAmount").
-		Scan(&result).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to calculate total amount"})
+	if err := config.GetDB().Model(&models.Order{}).Count(&result).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to count orders"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"totalAmount": result.TotalAmount,
+		"totalAmount": result,
 	})
 }

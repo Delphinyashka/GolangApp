@@ -54,7 +54,7 @@ export default function MainPage() {
             const data = await response.json();
             console.log(totalOrders);
             setOrders(data.orders);
-            setTotalOrders(data.total);
+            setTotalOrders(data.ordersTotal);
         } else {
             const responseMessage = await response.json();
             setErrorMessage(responseMessage.error || "Authentication failed");
@@ -96,7 +96,7 @@ export default function MainPage() {
                         </Table.Tbody>
                     </Table>
                     <Pagination
-                        page={currentPage}
+                        value={currentPage}
                         onChange={(page) => {
                             setCurrentPage(page);
                             fetchOrders(Cookies.get("jwt") || "", page, itemsPerPage);
