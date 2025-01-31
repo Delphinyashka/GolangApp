@@ -8,11 +8,9 @@ import (
 	"strings"
 )
 
-const clientsServiceURL = "http://localhost:8083" // Clients service URL
+const clientsServiceURL = "http://localhost:8083"
 
-// FetchClientsBatch retrieves client data based on a batch of client IDs
 func FetchClientsBatch(clientIDs map[string]bool) ([]map[string]interface{}, error) {
-	// Convert client IDs map to slice
 	var ids []string
 	for id := range clientIDs {
 		ids = append(ids, id)

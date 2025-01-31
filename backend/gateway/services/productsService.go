@@ -8,11 +8,9 @@ import (
 	"strings"
 )
 
-const productsServiceURL = "http://localhost:8085" // Products service URL
+const productsServiceURL = "http://localhost:8085"
 
-// FetchProductsBatch retrieves product data based on a batch of product IDs
 func FetchProductsBatch(productIDs map[string]bool) ([]map[string]interface{}, error) {
-	// Convert product IDs map to slice
 	var ids []string
 	for id := range productIDs {
 		ids = append(ids, id)

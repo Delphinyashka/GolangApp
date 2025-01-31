@@ -8,9 +8,8 @@ import (
 	"strings"
 )
 
-const ordersServiceURL = "http://localhost:8084" // Orders service URL
+const ordersServiceURL = "http://localhost:8084"
 
-// FetchOrders retrieves order data from the orders service based on order IDs with pagination
 func FetchOrders(orderIDs []string, page int, limit int) ([]map[string]interface{}, error) {
 	url := fmt.Sprintf("%s/orders?ids=%s&page=%d&limit=%d", ordersServiceURL, strings.Join(orderIDs, ","), page, limit)
 	resp, err := http.Get(url)
