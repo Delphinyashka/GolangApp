@@ -49,14 +49,21 @@ func SignIn(c *gin.Context) {
 }
 
 func VerifyToken(c *gin.Context) {
-	tokenString, err := c.Cookie("token")
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+	tokenString := c.GetHeader("Authorization")
+	if tokenString == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header missing"})
+		return
+	}
+
+	if len(tokenString) > 7 && tokenString[:7] == "Bearer " {
+		tokenString = tokenString[7:]
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
 		return
 	}
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("REFRESH_TOKEN_SECRET")), nil
+		return []byte(os.Getenv("JWT_TOKEN_SECRET")), nil
 	})
 
 	if err != nil || !token.Valid {
@@ -66,6 +73,7 @@ func VerifyToken(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Authenticated"})
 }
+
 
 func Refresh(c *gin.Context) {
 	services.RefreshToken(c)

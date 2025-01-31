@@ -9,15 +9,14 @@ import (
 )
 
 func GetOrders(c *gin.Context) {
-	// Retrieve JWT from Authorization header
 	token := c.GetHeader("Authorization")
 	if token == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization token is required"})
 		return
 	}
 
-	// Verify JWT token through the auth service
 	isValid, err := services.VerifyJWTToken(token)
+
 	if err != nil || !isValid {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
 		return
